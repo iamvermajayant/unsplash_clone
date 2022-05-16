@@ -32,30 +32,29 @@ function App() {
 
   useEffect(() => {
     fetchImages();
+    // eslint-disable-next-line
   }, []);
 
-  const fetchImages = (count = 10) => {
+  const fetchImages = (count = 8) => {
     const rootApi = "https://api.unsplash.com";
     const accesskey = process.env.REACT_APP_API_KEY;
 
     axios
-      .get(
-        `${rootApi}/photos/random?client_id=${accesskey}&count=12`
-      )
+      .get(`${rootApi}/photos/random?client_id=${accesskey}&count=${count}`)
       .then((response) => setImages([...images, ...response.data]))
       .catch((err) => console.log(err));
-  }
+  };
 
   return (
     <div className="App">
       <Heading />
       <GlobalStyles />
-      <InfiniteScroll 
-        loader={<Loader/>}
+      <InfiniteScroll
         dataLength={images.length}
-        hasMore={true}
         next={fetchImages}
-        >
+        hasMore={true}
+        loader={<Loader />}
+      >
         <WrapperImages>
           {images.map((image) => (
             <UnsplashImage url={image.urls.thumb} key={image.id} />
