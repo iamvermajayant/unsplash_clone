@@ -9,9 +9,10 @@ const Img = styled.img`
 `;
 
 const ImageView = ({data}) => {
+    //console.log(data);
   return (
     <a href={data.urls.regular} target="_blank" rel="noreferrer">
-        <Img loading = "lazy" src={data.urls.raw} alt={data.urls.description} />
+        <Img loading = "lazy" src={data.urls.thumb} alt={data.urls.description} />
     </a>
   )
 }

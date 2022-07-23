@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
+import { SearchOutlined } from '@ant-design/icons';
 
 const Header = styled.header`
   max-width: 90rem;
@@ -20,8 +21,8 @@ const H1 = styled.h1`
 const Heading = () => {
   return (
     <Header>
-        <H1>Unsplash</H1>
-    <h3><Link to="/search" style={{textDecoration : 'none' , marginLeft : '2rem'}}>search photos</Link></h3>
+        <H1><Link to="/" style={{textDecoration : 'none', color : 'black'}}>Unsplash</Link></H1>
+    <h3><Link to="/search" style={{textDecoration : 'none' , marginLeft : '2rem', color : 'black'}}>search photos <SearchOutlined /></Link></h3>
     </Header>
   )
 }

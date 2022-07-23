@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import SearchImages from "./SearchImages";
 import UseAxios from "./hooks/UseAxios";
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
+import Pagination from "@mui/material/Pagination/Pagination";
 
 const Header = styled.header`
   max-width: 90rem;
@@ -60,37 +61,86 @@ const WrapperImages = styled.section`
   grid-auto-rows: 350px;
 `;
 
-const Search = () => {
+const PaginationWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+`;
 
+const Search = () => {
   const [search, setSearch] = useState("");
-  const { response, isLoading, error, fetchData } = UseAxios(
-    `search/photos?page=1&query=cat&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`
+  const {
+    response,
+    isLoading,
+    error,
+    fetchData,
+    setCurrentPage,
+    currentPage,
+    totalPages,
+  } = UseAxios(
+    `search/photos?page=1&query=cat&per_page=30&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`
   );
+
+  let responsePerPage = 10;
+  const LastIndexResponse = currentPage * responsePerPage;
+  const FirstIndexResponse = LastIndexResponse - responsePerPage;
+  
+  const currentResponse = response.slice(FirstIndexResponse, LastIndexResponse);
   console.log(response);
+  console.log(totalPages);
+  console.log(currentPage);
 
   const handleSubmit = () => {
-    fetchData(`search/photos?page=1&query=${search}&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`)  
+    fetchData(
+      `search/photos?page=${currentPage}&query=${search}&per_page=30&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`
+    );
     setSearch("");
+    // setCurrentPage(value);
+  };
+  // useEffect(() => {
+  //   fetchData(`search/photos?page=${currentPage}&query=${search}&per_page=20&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`)
+  // }, [currentPage])
+  
+  const Paginate = (e, value) => {
+    setCurrentPage(value); 
+    //fetchData(`search/photos?page=${currentPage}&query=${search}&per_page=20&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`);
   }
 
   return (
     <>
       <Header>
-      <Link to="/" style={{textDecoration : 'none' , color : 'black'}}>
-        <H1>Unsplash</H1>
-      </Link>
+        <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+          <H1>Unsplash</H1>
+        </Link>
 
         <SearchWrapper>
-          <InputText placeholder="Search Photos" type="text" value={search} onChange={(e) => {setSearch(e.target.value)}}></InputText>
-          <Button
-            onClick={handleSubmit}
-            disabled={!search}
-          >Search</Button>
+          <InputText
+            placeholder="Search Photos"
+            type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          ></InputText>
+          <Button onClick={handleSubmit} disabled={!search}>
+            Search
+          </Button>
         </SearchWrapper>
       </Header>
       <WrapperImages>
-        <SearchImages response={response} />
+        <SearchImages response={currentResponse} />
       </WrapperImages>
+      {response.length >= 10 && (
+        <PaginationWrapper>
+          <Pagination
+            defaultPage={1}
+            count={Math.ceil(totalPages / responsePerPage)}
+            page={currentPage}
+            onChange={Paginate}
+          />
+        </PaginationWrapper>
+      )}
     </>
   );
 };
