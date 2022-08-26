@@ -4,6 +4,9 @@ import SearchImages from "./SearchImages";
 import UseAxios from "./hooks/UseAxios";
 import { Link } from "react-router-dom";
 import Pagination from "@mui/material/Pagination/Pagination";
+import axios from 'axios';
+import Home from "./Home";
+import ReusableGrid from "./ReusableGrid";
 
 const Header = styled.header`
   max-width: 90rem;
@@ -70,6 +73,7 @@ const PaginationWrapper = styled.div`
 
 const Search = () => {
   const [search, setSearch] = useState("");
+  const [responseQuery, setResponseQuery] = useState([]);
   const {
     response,
     isLoading,
@@ -79,10 +83,10 @@ const Search = () => {
     currentPage,
     totalPages,
   } = UseAxios(
-    `search/photos?page=1&query=cat&per_page=30&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`
+    // `search/photos?page=1&query=cat&per_page=30&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`
   );
 
-  let responsePerPage = 10;
+  let responsePerPage = 20;
   const LastIndexResponse = currentPage * responsePerPage;
   const FirstIndexResponse = LastIndexResponse - responsePerPage;
   
@@ -90,21 +94,37 @@ const Search = () => {
   console.log(response);
   console.log(totalPages);
   console.log(currentPage);
+  
+  // useEffect(()=>{
+    
+  // }, [search])
 
   const handleSubmit = () => {
     fetchData(
-      `search/photos?page=${currentPage}&query=${search}&per_page=30&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`
+      `search/photos?page=${currentPage}&query=${search}&per_page=20&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`
     );
-    setSearch("");
+    //setSearch("");
     // setCurrentPage(value);
   };
   // useEffect(() => {
-  //   fetchData(`search/photos?page=${currentPage}&query=${search}&per_page=20&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`)
+  //   fetchData(`search/photos?page=${currentPage}&query=${search}&per_page=30&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`)
   // }, [currentPage])
-  
+  axios.defaults.baseURL = 'https://api.unsplash.com';
+
+  const loadData = async() => {
+    const query = `https://api.unsplash.com/search/photos?page=${currentPage}&query=${search}&per_page=20&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`;
+    const res =  await axios(query);
+    setResponseQuery([...res.data.results]);
+    window.scrollTo({ top: 20 , behavior: 'smooth' });
+    //console.log(res.data.results);
+  }
+
+
   const Paginate = (e, value) => {
     setCurrentPage(value); 
+    loadData();
     //fetchData(`search/photos?page=${currentPage}&query=${search}&per_page=20&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`);
+    console.log(value);
   }
 
   return (
@@ -129,9 +149,10 @@ const Search = () => {
         </SearchWrapper>
       </Header>
       <WrapperImages>
-        <SearchImages response={currentResponse} />
+         {search ?    
+        <SearchImages response={currentResponse} res={responseQuery} /> : <ReusableGrid/>}
       </WrapperImages>
-      {response.length >= 10 && (
+      { search && response.length >= 10 && (
         <PaginationWrapper>
           <Pagination
             defaultPage={1}

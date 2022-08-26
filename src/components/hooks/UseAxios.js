@@ -1,5 +1,5 @@
 import axios from 'axios';
-import  {useState, useEffect} from "react";
+import  {useState, useEffect, useRef} from "react";
 
 const UseAxios = (param) => {
     const [response, setResponse]  = useState([]);
@@ -14,8 +14,13 @@ const UseAxios = (param) => {
         try {
             setIsLoading(true);
             const res = await axios(url);
-            setResponse(res.data.results);
-            setCurrentPage(currentPage);
+            if(currentPage === 1){
+                setResponse(res.data.results);
+            }
+            else{
+                //setResponse((prev) => [...prev, ...res.data.results]);
+                setResponse([...res.data.results])
+            }
             setTotalPages(res.data.total_pages);
         } catch (error) {
             setError(error);
