@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Loader } from "./Loader";
-import Heading from "./Heading";
 import UnsplashImage from "./UnsplashImage";
 import axios from "axios";
 import { createGlobalStyle } from "styled-components";
 import styled from "styled-components";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {Link} from "react-router-dom";
+
 
 const GlobalStyles = createGlobalStyle`
 *{
@@ -28,7 +27,7 @@ const WrapperImages = styled.section`
   grid-auto-rows: 350px;
 `;
 
-function Home() {
+const ReusableGrid = () => {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
@@ -45,11 +44,9 @@ function Home() {
       .then((response) => setImages([...images, ...response.data]))
       .catch((err) => console.log(err));
   };
-
   return (
     <div className="App">
-      <Heading />
-      <GlobalStyles />
+    <GlobalStyles />
       <InfiniteScroll
         dataLength={images.length}
         next={fetchImages}
@@ -64,6 +61,6 @@ function Home() {
       </InfiniteScroll>
     </div>
   );
-}
+};
 
-export default Home;
+export default ReusableGrid;

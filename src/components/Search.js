@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import SearchImages from "./SearchImages";
 import UseAxios from "./hooks/UseAxios";
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
+import Pagination from "@mui/material/Pagination/Pagination";
+import axios from 'axios';
+import Home from "./Home";
+import ReusableGrid from "./ReusableGrid";
 
 const Header = styled.header`
   max-width: 90rem;
@@ -60,37 +64,104 @@ const WrapperImages = styled.section`
   grid-auto-rows: 350px;
 `;
 
-const Search = () => {
+const PaginationWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+`;
 
+const Search = () => {
   const [search, setSearch] = useState("");
-  const { response, isLoading, error, fetchData } = UseAxios(
-    `search/photos?page=1&query=cat&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`
+  const [responseQuery, setResponseQuery] = useState([]);
+  const {
+    response,
+    isLoading,
+    error,
+    fetchData,
+    setCurrentPage,
+    currentPage,
+    totalPages,
+  } = UseAxios(
+    // `search/photos?page=1&query=cat&per_page=30&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`
   );
+
+  let responsePerPage = 20;
+  const LastIndexResponse = currentPage * responsePerPage;
+  const FirstIndexResponse = LastIndexResponse - responsePerPage;
+  
+  const currentResponse = response.slice(FirstIndexResponse, LastIndexResponse);
   console.log(response);
+  console.log(totalPages);
+  console.log(currentPage);
+  
+  // useEffect(()=>{
+    
+  // }, [search])
 
   const handleSubmit = () => {
-    fetchData(`search/photos?page=1&query=${search}&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`)  
-    setSearch("");
+    fetchData(
+      `search/photos?page=${currentPage}&query=${search}&per_page=20&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`
+    );
+    //setSearch("");
+    // setCurrentPage(value);
+  };
+  // useEffect(() => {
+  //   fetchData(`search/photos?page=${currentPage}&query=${search}&per_page=30&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`)
+  // }, [currentPage])
+  axios.defaults.baseURL = 'https://api.unsplash.com';
+
+  const loadData = async() => {
+    const query = `https://api.unsplash.com/search/photos?page=${currentPage}&query=${search}&per_page=20&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`;
+    const res =  await axios(query);
+    setResponseQuery([...res.data.results]);
+    window.scrollTo({ top: 20 , behavior: 'smooth' });
+    //console.log(res.data.results);
+  }
+
+
+  const Paginate = (e, value) => {
+    setCurrentPage(value); 
+    loadData();
+    //fetchData(`search/photos?page=${currentPage}&query=${search}&per_page=20&client_id=${process.env.REACT_APP_SEARCH_API_KEY}`);
+    console.log(value);
   }
 
   return (
     <>
       <Header>
-      <Link to="/" style={{textDecoration : 'none' , color : 'black'}}>
-        <H1>Unsplash</H1>
-      </Link>
+        <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+          <H1>Unsplash</H1>
+        </Link>
 
         <SearchWrapper>
-          <InputText placeholder="Search Photos" type="text" value={search} onChange={(e) => {setSearch(e.target.value)}}></InputText>
-          <Button
-            onClick={handleSubmit}
-            disabled={!search}
-          >Search</Button>
+          <InputText
+            placeholder="Search Photos"
+            type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          ></InputText>
+          <Button onClick={handleSubmit} disabled={!search}>
+            Search
+          </Button>
         </SearchWrapper>
       </Header>
       <WrapperImages>
-        <SearchImages response={response} />
+         {search ?    
+        <SearchImages response={currentResponse} res={responseQuery} /> : <ReusableGrid/>}
       </WrapperImages>
+      { search && response.length >= 10 && (
+        <PaginationWrapper>
+          <Pagination
+            defaultPage={1}
+            count={Math.ceil(totalPages / responsePerPage)}
+            page={currentPage}
+            onChange={Paginate}
+          />
+        </PaginationWrapper>
+      )}
     </>
   );
 };

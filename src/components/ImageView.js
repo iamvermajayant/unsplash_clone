@@ -5,13 +5,13 @@ const Img = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 1.5rem;
 `;
 
 const ImageView = ({data}) => {
+    //console.log(data);
   return (
     <a href={data.urls.regular} target="_blank" rel="noreferrer">
-        <Img loading = "lazy" src={data.urls.raw} alt={data.urls.description} />
+        <Img loading = "lazy" src={data.urls.thumb} alt={data.urls.description} />
     </a>
   )
 }
