@@ -118,6 +118,12 @@ const Search = () => {
     window.scrollTo({ top: 20 , behavior: 'smooth' });
     //console.log(res.data.results);
   }
+  useEffect(() =>{
+    setResponseQuery([]);
+    setCurrentPage(1);
+
+  },[search])
+
 
 
   const Paginate = (e, value) => {
