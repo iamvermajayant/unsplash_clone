@@ -6,6 +6,7 @@ import axios from "axios";
 import { createGlobalStyle } from "styled-components";
 import styled from "styled-components";
 import InfiniteScroll from "react-infinite-scroll-component";
+// eslint-disable-next-line
 import {Link} from "react-router-dom";
 
 const GlobalStyles = createGlobalStyle`

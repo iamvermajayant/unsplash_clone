@@ -1,4 +1,5 @@
 import axios from 'axios';
+// eslint-disable-next-line
 import  {useState, useEffect, useRef} from "react";
 
 const UseAxios = (param) => {
@@ -32,6 +33,7 @@ const UseAxios = (param) => {
 
     useEffect(()=>{
         fetchData(param);
+        // eslint-disable-next-line
     },[param])
 
     return {

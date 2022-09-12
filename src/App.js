@@ -4,6 +4,7 @@ import Search from './components/Search';
 import {Routes, Route} from "react-router-dom";
 
 const App = () => {
+  // eslint-disable-next-line
   const [search, setSearch] = useState(false);
     return (
       <div className="App">
