@@ -5,7 +5,7 @@ import UseAxios from "./hooks/UseAxios";
 import { Link } from "react-router-dom";
 import Pagination from "@mui/material/Pagination/Pagination";
 import axios from 'axios';
-import Home from "./Home";
+//import Home from "./Home";
 import ReusableGrid from "./ReusableGrid";
 
 const Header = styled.header`
@@ -76,8 +76,8 @@ const Search = () => {
   const [responseQuery, setResponseQuery] = useState([]);
   const {
     response,
-    isLoading,
-    error,
+    //isLoading,
+    //error,
     fetchData,
     setCurrentPage,
     currentPage,
@@ -121,7 +121,7 @@ const Search = () => {
   useEffect(() =>{
     setResponseQuery([]);
     setCurrentPage(1);
-
+    // eslint-disable-next-line
   },[search])
 
 
