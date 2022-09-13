@@ -2,6 +2,7 @@ import Home from './components/Home';
 import {React, useState} from 'react'
 import Search from './components/Search';
 import {Routes, Route} from "react-router-dom";
+import './App.css';
 
 const App = () => {
   // eslint-disable-next-line
